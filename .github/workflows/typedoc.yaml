@@ -3,16 +3,11 @@ name: "typedoc"
 on:
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,9 +21,6 @@ jobs:
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
 
       - name: Update npm
         # Install the latest version of npm since we need npm 11.5.1 or later to publish to npm using OIDC (see
@@ -44,18 +36,33 @@ jobs:
       - name: Generate documentation
         run: bun run build-docs
 
-      - name: Upload generated documentation to Pages
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./docs
+      - name: Deploy documentation to gh-pages branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
 
-  deploy:
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin gh-pages:gh-pages || true
+
+          if git show-ref --verify --quiet refs/heads/gh-pages; then
+            git worktree add /tmp/gh-pages gh-pages
+          else
+            git worktree add -b gh-pages /tmp/gh-pages
+          fi
+
+          rsync -a --delete docs/ /tmp/gh-pages/
+          touch /tmp/gh-pages/.nojekyll
+
+          cd /tmp/gh-pages
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No documentation changes to deploy."
+            exit 0
+          fi
+
+          git commit -m "Deploy TypeDoc for ${GITHUB_SHA}"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

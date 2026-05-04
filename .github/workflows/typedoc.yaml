@@ -4,10 +4,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,30 +38,18 @@ jobs:
       - name: Generate documentation
         run: bun run build-docs
 
-      - name: Deploy documentation to viewer-2026-01-30 branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
+      - name: Upload generated documentation to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git fetch origin viewer-2026-01-30:viewer-2026-01-30
-
-          git worktree add /tmp/docs-deploy viewer-2026-01-30
-
-          mkdir -p /tmp/docs-deploy/docs-built
-          rsync -a --delete docs/ /tmp/docs-deploy/docs-built/
-          touch /tmp/docs-deploy/docs-built/.nojekyll
-
-          cd /tmp/docs-deploy
-          git add docs-built/
-
-          if git diff --cached --quiet; then
-            echo "No documentation changes to deploy."
-            exit 0
-          fi
-
-          git commit -m "Deploy TypeDoc for ${GITHUB_SHA}"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" viewer-2026-01-30
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

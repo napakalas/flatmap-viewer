@@ -36,7 +36,7 @@ jobs:
       - name: Generate documentation
         run: bun run build-docs
 
-      - name: Deploy documentation to gh-pages branch
+      - name: Deploy documentation to viewer-2026-01-30 branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -45,19 +45,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git fetch origin gh-pages:gh-pages || true
+          git fetch origin viewer-2026-01-30:viewer-2026-01-30
 
-          if git show-ref --verify --quiet refs/heads/gh-pages; then
-            git worktree add /tmp/gh-pages gh-pages
-          else
-            git worktree add -b gh-pages /tmp/gh-pages
-          fi
+          git worktree add /tmp/docs-deploy viewer-2026-01-30
 
-          rsync -a --delete --exclude '.git' docs/ /tmp/gh-pages/
-          touch /tmp/gh-pages/.nojekyll
+          mkdir -p /tmp/docs-deploy/docs-built
+          rsync -a --delete docs/ /tmp/docs-deploy/docs-built/
+          touch /tmp/docs-deploy/docs-built/.nojekyll
 
-          cd /tmp/gh-pages
-          git add -A
+          cd /tmp/docs-deploy
+          git add docs-built/
 
           if git diff --cached --quiet; then
             echo "No documentation changes to deploy."
@@ -65,4 +62,4 @@ jobs:
           fi
 
           git commit -m "Deploy TypeDoc for ${GITHUB_SHA}"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" viewer-2026-01-30

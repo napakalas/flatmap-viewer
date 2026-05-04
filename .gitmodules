@@ -1,3 +1,0 @@
-[submodule "maplibre-gl-svg"]
-	path = thirdParty/maplibre-gl-svg
-	url = https://github.com/dbrnz/maplibre-gl-svg.git

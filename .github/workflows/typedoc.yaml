@@ -35,13 +35,13 @@ jobs:
       - name: Install packages
         run: bun install
 
-      - name: Generate documentation
-        run: bun run build-docs
+      - name: Generate app
+        run: bun run build -- --base /flatmap-viewer/
 
-      - name: Upload generated documentation to Pages
+      - name: Upload generated app to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./dist
 
   deploy:
     runs-on: ubuntu-latest

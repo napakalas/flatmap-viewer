@@ -3,9 +3,9 @@
     "readme": "none",
     "projectDocuments": ["documentation/howto.md"],
     "navigationLinks": {
-        "Examples": "https://anatomicmaps.github.io/flatmap-viewer/documents/HowTo_Guide.html",
-        "API": "https://anatomicmaps.github.io/flatmap-viewer/modules/index.html",
-        "GitHub": "https://github.com/AnatomicMaps/flatmap-viewer"
+        "Examples": "https://napakalas.github.io/flatmap-viewer/documents/HowTo_Guide.html",
+        "API": "https://napakalas.github.io/flatmap-viewer/modules/index.html",
+        "GitHub": "https://github.com/napakalas/flatmap-viewer"
     },
     "plugin": [
         "typedoc-plugin-missing-exports",

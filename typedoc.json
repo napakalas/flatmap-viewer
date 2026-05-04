@@ -1,6 +1,6 @@
 {
     "$schema": "https://typedoc.org/schema.json",
-    "readme": "./README.md",
+    "readme": "none",
     "projectDocuments": ["documentation/howto.md"],
     "navigationLinks": {
         "Examples": "https://anatomicmaps.github.io/flatmap-viewer/documents/HowTo_Guide.html",

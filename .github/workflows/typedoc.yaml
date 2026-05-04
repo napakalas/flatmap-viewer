@@ -53,7 +53,7 @@ jobs:
             git worktree add -b gh-pages /tmp/gh-pages
           fi
 
-          rsync -a --delete docs/ /tmp/gh-pages/
+          rsync -a --delete --exclude '.git' docs/ /tmp/gh-pages/
           touch /tmp/gh-pages/.nojekyll
 
           cd /tmp/gh-pages

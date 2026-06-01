@@ -179,7 +179,7 @@ class FlatMapStylingLayer
         this.setPaint(this.#layerOptions)
 
         // Detail layers only show by clicking on their low-resolution feature or their zoom marker
-        if (layer['detail-layer']) {
+        if (layer['detail-layer'] && flatmap.options.style!==FLATMAP_STYLE.ANATOMICAL) {
             this.activate(false)
         }
     }

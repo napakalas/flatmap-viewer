@@ -8,6 +8,29 @@
     position: relative;
     background-color: white;
 }
+
+.flatmap-corner-label {
+    position: absolute;
+    left: 10px;
+    bottom: 8px;
+    z-index: 4;
+    max-width: min(70vw, 520px);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 1.25;
+    text-align: left;
+    color: #111;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+}
+
+.flatmap-corner-label a {
+    color: inherit;
+    text-decoration: underline;
+}
+
 .maplibregl-ctrl-minimap {
     border: 1px solid #444;
 }

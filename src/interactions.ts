@@ -165,6 +165,11 @@ function getRenderedLabel(properties)
 
 export class UserInteractions
 {
+    static readonly #HUMAN_SENMOT_FLATMAP_ID = 'human-senmot-flatmap'
+    static readonly #HUMAN_SENMOT_HACS_LINK = 'https://www.figma.com/community/file/1320468164820924031'
+    static readonly #HUMAN_SENMOT_CORNER_LABEL_PREFIX = 'Anatomy layers based on '
+    static readonly #HUMAN_SENMOT_CORNER_LABEL_SUFFIX = ', used under CC BY 4.0. Modified with custom map markers, coordinate polygons, and data annotations.'
+
     #activeFeatures: Map<GeoJSONId, MapFeature> = new Map()
     #activeMarker: maplibregl.Marker|null = null
     #annotationByMarkerId = new Map()
@@ -324,6 +329,8 @@ export class UserInteractions
             }
         }
 
+        this.#addMapCornerLabel()
+
         // Initialise map annotation
         this.#setupAnnotation()
 
@@ -366,6 +373,35 @@ export class UserInteractions
 
         // Prime path density so initial rendering and hit-testing are in sync.
         this.#updateAreaDensity(true)
+    }
+
+    #addMapCornerLabel()
+    //===================
+    {
+        if (this.#flatmap.id !== UserInteractions.#HUMAN_SENMOT_FLATMAP_ID) {
+            return
+        }
+
+        const mapContainer = this.#map.getContainer()
+        const elementId = `${this.#flatmap.uniqueId}-corner-label`
+        if (mapContainer.querySelector(`#${elementId}`)) {
+            return
+        }
+
+        const label = document.createElement('div')
+        label.id = elementId
+        label.className = 'flatmap-corner-label'
+
+        const hacsLink = document.createElement('a')
+        hacsLink.href = UserInteractions.#HUMAN_SENMOT_HACS_LINK
+        hacsLink.target = '_blank'
+        hacsLink.rel = 'noopener noreferrer'
+        hacsLink.textContent = 'Human Anatomy Component System'
+
+        label.append(UserInteractions.#HUMAN_SENMOT_CORNER_LABEL_PREFIX)
+        label.append(hacsLink)
+        label.append(UserInteractions.#HUMAN_SENMOT_CORNER_LABEL_SUFFIX)
+        mapContainer.appendChild(label)
     }
 
     get minimap()

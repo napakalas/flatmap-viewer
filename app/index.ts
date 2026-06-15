@@ -180,26 +180,15 @@ class StandaloneViewer
             this.#currentServer = null
         }
         if (this.#currentServer === null) {
-            if (requestEndpoint.includes('localhost')) {
-                if ('local' in this.#mapEndpoints) {
-                    // localhost is a special case since viewer might be separate
-                    this.#currentServer = 'local'
+            for (const [server, endpoint] of Object.entries(this.#mapEndpoints)) {
+                if (endpoint === requestEndpoint) {
+                    this.#currentServer = server
+                    break
                 }
-            } else {
-                // Running remotely so don't confuse the user...
-                if ('local' in this.#mapEndpoints) {
-                    delete this.#mapEndpoints.local
-                }
-                for (const [server, endpoint] of Object.entries(this.#mapEndpoints)) {
-                    if (endpoint === requestEndpoint) {
-                        this.#currentServer = server
-                        break
-                    }
-                }
-                if (this.#currentServer === null) {
-                    this.#currentServer = 'default'
-                    this.#mapEndpoints[this.#currentServer] = requestEndpoint
-                }
+            }
+            if (this.#currentServer === null) {
+                this.#currentServer = 'default'
+                this.#mapEndpoints[this.#currentServer] = requestEndpoint
             }
         }
         if (Object.keys(this.#mapEndpoints).length <= 1) {

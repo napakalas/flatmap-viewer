@@ -142,7 +142,7 @@ class StandaloneViewer
     #currentMap: FlatMap|null = null
     #currentServer: string|null
     #currentViewer: MapViewer|null = null
-    #defaultBackground: string = localStorage.getItem('flatmap-background-colour') || 'black'
+    #defaultBackground: string = localStorage.getItem('flatmap-background-colour') || '#f5f5f5'
     #drawControl: DrawControl|null = null
 
     #mapEndpoints: object

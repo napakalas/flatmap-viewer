@@ -41,7 +41,6 @@ const MINIMAP = false; // { width: '10%', background: '#FCC' };
 
 const MAP_ENDPOINTS = {
     huggingface: 'https://napakalas-flatmap-demo.hf.space/',
-    local: 'http://localhost:8000',
     curation: 'https://mapcore-demo.org/curation/flatmap/',
     devel: 'https://mapcore-demo.org/devel/flatmap/v4/',
     fccb: 'https://mapcore-demo.org/fccb/flatmap/',

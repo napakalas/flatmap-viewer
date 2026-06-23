@@ -1360,6 +1360,7 @@ export class RasterStyleLayer extends StyleLayer
     style(layer: FlatMapLayer, options: StylingOptions): RasterLayerSpecification
     {
         const coloured = !('coloured' in options) || options.coloured
+        const anatomical = (options.flatmapStyle === FLATMAP_STYLE.ANATOMICAL)
         const style: RasterLayerSpecification = {
             ...super.style(layer),
             source: this.id,
@@ -1373,13 +1374,22 @@ export class RasterStyleLayer extends StyleLayer
             style['maxzoom'] = this.#options['max-zoom']
             const fullOpacity = Math.min(this.#options['max-zoom'],
                                          this.#options['min-zoom'] + DETAIL_ZOOM_OFFSET)
+            const stops = anatomical
+                ? [
+                    this.#options['min-zoom'] + 2, 0.1,
+                    fullOpacity, 1
+                ]
+                : [
+                    fullOpacity, 1
+                ];
+
             style['paint'] = {
                 'raster-opacity': [
                     'interpolate',
                     ['linear'],
                     ['zoom'],
                     this.#options['min-zoom'], 0,
-                    fullOpacity, 1
+                    ...stops
                 ]
             }
         }
